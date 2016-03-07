@@ -1,6 +1,5 @@
 import {Component, View, Input, OnDestroy, ApplicationRef} from "angular2/core";
 import {ROUTER_DIRECTIVES, RouteConfig, Router} from "angular2/router";
-import {MATERIAL_DIRECTIVES} from "../ng2-material/all";
 import {DEMO_DIRECTIVES} from "./all";
 import Example from "./example";
 import {Http, Response} from "angular2/http";
@@ -8,8 +7,7 @@ import {IndexPage} from "./routes/index";
 import {ComponentPage} from "./routes/component";
 import {ComponentsService, IComponentMeta} from "./services/components";
 import {NavigationService} from "./services/navigation";
-import {SidenavService} from "ng2-material/components/sidenav/sidenav_service";
-import {Media} from "ng2-material/core/util/media";
+import {Media, MATERIAL_DIRECTIVES, SidenavService} from "ng2-material/all";
 
 /**
  * Describe an example that can be dynamically loaded.

@@ -1,7 +1,7 @@
 import {bind, enableProdMode} from "angular2/core";
 import {bootstrap} from "angular2/platform/browser";
 import {ROUTER_PROVIDERS, HashLocationStrategy, LocationStrategy} from "angular2/router";
-import {MATERIAL_BROWSER_PROVIDERS} from "../ng2-material/all";
+import {MATERIAL_BROWSER_PROVIDERS} from "ng2-material/all";
 import {HTTP_PROVIDERS} from "angular2/http";
 import {ComponentsService} from "./services/components";
 import {NavigationService} from "./services/navigation";

@@ -1,18 +1,19 @@
-import {View, Component} from 'angular2/core';
-import {Input} from 'angular2/core';
-import {DynamicComponentLoader} from "angular2/core";
-import {ElementRef} from "angular2/core";
-import {ComponentRef} from "angular2/core";
+import {
+  View,
+  Component,
+  Input,
+  DynamicComponentLoader,
+  ElementRef,
+  ComponentRef,
+  Query,
+  QueryList
+} from "angular2/core";
 import {IExampleData} from "./app";
 import {DEMO_DIRECTIVES} from "./all";
-import {MATERIAL_DIRECTIVES} from "ng2-material/all";
-import {Http} from "angular2/http";
-import {Response} from "angular2/http";
-import {Highlight} from './highlight';
+import {MATERIAL_DIRECTIVES, MdTabs} from "ng2-material/all";
+import {Http, Response} from "angular2/http";
+import {Highlight} from "./highlight";
 import {TimerWrapper} from "angular2/src/facade/async";
-import {MdTabs} from "ng2-material/components/tabs/tabs";
-import {Query} from "angular2/core";
-import {QueryList} from "angular2/core";
 
 
 export interface ISourceFile {
@@ -49,7 +50,8 @@ export default class Example {
 
   constructor(private _element: ElementRef,
               public http: Http,
-              @Query(MdTabs) public panes: QueryList<MdTabs>,
+              @Query(MdTabs)
+              public panes: QueryList<MdTabs>,
               public dcl: DynamicComponentLoader) {
   }
 
@@ -68,7 +70,8 @@ export default class Example {
   /**
    * The selected type of source to view.
    */
-  @Input() public selected: string = 'html';
+  @Input()
+  public selected: string = 'html';
 
   applyModel(model: IExampleData) {
     this.orderedFiles = [];
@@ -114,7 +117,7 @@ export default class Example {
   }
 
   toggleSource() {
-    if(this.showSource){
+    if (this.showSource) {
       this.showTabs = false;
       TimerWrapper.setTimeout(() => {
         this.showSource = false;

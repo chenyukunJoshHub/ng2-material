@@ -245,7 +245,8 @@ module.exports = function (grunt) {
       }
     },
     webpack: {
-      singleJs: require('./webpack.config.js')
+      singleJs: require('./webpack.config.js'),
+      bundle: require('./webpack.bundle.config.js')
     }
 
   });
@@ -340,12 +341,17 @@ module.exports = function (grunt) {
 
   grunt.registerTask('render', 'Prerender your Universal (isomorphic) Angular 2 app', function () {
     try {
+      var proxyquire = require('proxyquire');
       var zone = require('zone.js');
       var reflect = require('reflect-metadata');
       var provide = require('angular2/core');
       var router = require('angular2/router');
-      var ng2material = require('./out/all');
-      var app = require('./examples/app');
+      var ng2material = require('./out/all.webpack.scripts');
+      ng2material['@global'] = true;
+      ng2material['@noCallThru'] = true;
+      var app = proxyquire('./examples/app', {
+        'ng2-material/all': ng2material
+      });
       var universal = require('angular2-universal-preview');
     }
     catch (e) {

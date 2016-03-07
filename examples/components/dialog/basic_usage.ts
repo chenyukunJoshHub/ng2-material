@@ -1,8 +1,6 @@
 import {View, Component, ElementRef} from "angular2/core";
-import {MATERIAL_DIRECTIVES, MdDialog} from "ng2-material/all";
+import {MATERIAL_DIRECTIVES, MdDialog, Media, MdDialogConfig, MdDialogBasic, MdDialogRef} from "ng2-material/all";
 import {DOM} from "angular2/src/platform/dom/dom_adapter";
-import {MdDialogConfig, MdDialogBasic, MdDialogRef} from "ng2-material/components/dialog/dialog";
-import {Media} from "../../../ng2-material/core/util/media";
 
 @Component({selector: 'dialog-basic-usage'})
 @View({
