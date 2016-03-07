@@ -1,3 +1,33 @@
+<a name="0.2.10"></a>
+## [0.2.10](https://github.com/justindujardin/ng2-material/compare/v0.2.9...v0.2.10) (2016-03-06)
+
+
+### Bug Fixes
+
+* **ink:** ink correctly radiates from under click on safari ([21e288f](https://github.com/justindujardin/ng2-material/commit/21e288f))
+
+
+
+<a name="0.2.9"></a>
+## [0.2.9](https://github.com/justindujardin/ng2-material/compare/v0.2.8...v0.2.9) (2016-03-05)
+
+
+### Features
+
+* **angular2:** update to beta 8 ([1d5c8e5](https://github.com/justindujardin/ng2-material/commit/1d5c8e5))
+
+
+
+<a name="0.2.8"></a>
+## [0.2.8](https://github.com/justindujardin/ng2-material/compare/v0.2.7...v0.2.8) (2016-02-28)
+
+
+### Bug Fixes
+
+* **examples:** add SidenavService to providers in sidenav example ([1fc09bd](https://github.com/justindujardin/ng2-material/commit/1fc09bd))
+
+
+
 <a name="0.2.7"></a>
 ## [0.2.7](https://github.com/justindujardin/ng2-material/compare/v0.2.6...v0.2.7) (2016-02-26)
 
