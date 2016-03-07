@@ -339,13 +339,19 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('render', 'Prerender your Universal (isomorphic) Angular 2 app', function () {
-    // TODO: for callstacks on errors, move the requires outside of this function.
-    var zone = require('zone.js');
-    var reflect = require('reflect-metadata');
-    var provide = require('angular2/core');
-    var router = require('angular2/router');
-    var app = require('./examples/app');
-    var universal = require('angular2-universal-preview');
+    try {
+      var zone = require('zone.js');
+      var reflect = require('reflect-metadata');
+      var provide = require('angular2/core');
+      var router = require('angular2/router');
+      var ng2material = require('./out/all');
+      var app = require('./examples/app');
+      var universal = require('angular2-universal-preview');
+    }
+    catch (e) {
+      console.error(e.stack);
+      return;
+    }
 
     // var universal = {
     //   NODE_HTTP_PROVIDERS,
@@ -357,7 +363,9 @@ module.exports = function (grunt) {
 
     var options = {
       App: app.DemosApp,
-      providers: [],
+      providers: [
+        ng2material.MATERIAL_NODE_PROVIDERS
+      ],
       preboot: false,
       separator: '\r\n'
     };

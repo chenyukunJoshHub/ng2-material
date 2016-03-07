@@ -44,9 +44,6 @@ export function throttle(func, delay, scope) {
   };
 }
 
-export function rAF(callback) {
-  window.requestAnimationFrame(callback);
-}
 
 export function parseTabIndexAttribute(attr: any): number {
   return isPresent(attr) ? NumberWrapper.parseInt(attr, 10) : 0;

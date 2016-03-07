@@ -1,5 +1,6 @@
 import {Injectable} from "angular2/core";
 import {Subject} from "rxjs/Subject";
+import {ViewportHelper} from "./viewport";
 
 
 /**
@@ -91,12 +92,16 @@ interface IMediaQueryCache {
 @Injectable()
 export class Media {
   private _cache: {[query:string]:IMediaQueryCache} = {};
+  
+  constructor(public viewport:ViewportHelper) {
+    
+  }
 
   listen(query: string): MediaListener {
     let listener = this._cache[query];
     if (!listener) {
       listener = this._cache[query] = {
-        mql: window.matchMedia(query),
+        mql: this.viewport.matchMedia(query),
         references: 0
       };
     }
@@ -113,15 +118,11 @@ export class Media {
   }
 
   hasMedia(size:string): boolean {
-    return Media.hasMedia(size);
-  }
-
-  static hasMedia(size: string): boolean {
     let query = Media.getQuery(size);
     if (!query) {
       return false;
     }
-    return window.matchMedia(query).matches;
+    return this.viewport.matchMedia(query).matches;
   }
 
   static getQuery(size: string): string {

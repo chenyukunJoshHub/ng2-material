@@ -15,11 +15,13 @@
     },
     "filesGlob": [
         "node_modules/angular2/typings/browser.d.ts",
+        "typings/main.d.ts",
         "ng2-material/**/*.ts"
     ],
     "compileOnSave": true,
     "files": [
         "node_modules/angular2/typings/browser.d.ts",
+        "typings/main.d.ts",
         "ng2-material/all.ts",
         "ng2-material/components/backdrop/backdrop.ts",
         "ng2-material/components/button/button.ts",

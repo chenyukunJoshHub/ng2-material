@@ -1,10 +1,8 @@
-import {View,Component,Directive,AfterContentInit,Input,OnChanges,Attribute,OnDestroy} from "angular2/core";
-import {debounce,throttle, rAF} from '../../core/util/util';
-import {ElementRef} from "angular2/core";
+import {Directive, AfterContentInit, Input, OnChanges, OnDestroy, ElementRef} from "angular2/core";
+import {debounce, throttle} from "../../core/util/util";
 import {DOM} from "angular2/src/platform/dom/dom_adapter";
-import {isPresent} from "angular2/src/facade/lang";
-import {isString} from "angular2/src/facade/lang";
-import {NumberWrapper} from "angular2/src/facade/lang";
+import {isPresent, isString, NumberWrapper} from "angular2/src/facade/lang";
+import {ViewportHelper} from "../../core/util/viewport";
 
 
 /**
@@ -66,13 +64,16 @@ export class MdToolbar implements AfterContentInit, OnChanges, OnDestroy {
   @Input() set mdShrinkSpeed(value: number) {
     this._mdShrinkSpeed = isString(value) ? NumberWrapper.parseFloat(<any>value) : value;
   }
-  get mdShrinkSpeed():number {
+
+  get mdShrinkSpeed(): number {
     return this._mdShrinkSpeed;
   }
+
   @Input() set mdScrollShrink(value: boolean) {
     this._mdScrollShrink = !!isPresent(value);
   }
-  get mdScrollShrink():boolean {
+
+  get mdScrollShrink(): boolean {
     return this._mdScrollShrink;
   }
 
@@ -88,7 +89,7 @@ export class MdToolbar implements AfterContentInit, OnChanges, OnDestroy {
 
   private _mdScrollShrink: boolean = false;
 
-  constructor(public el: ElementRef) {
+  constructor(public el: ElementRef, public viewport: ViewportHelper) {
     this._debouncedContentScroll = throttle(this.onContentScroll, 10, this);
     this._debouncedUpdateHeight = debounce(this.updateToolbarHeight, 5 * 1000, this);
   }
@@ -105,7 +106,7 @@ export class MdToolbar implements AfterContentInit, OnChanges, OnDestroy {
     }
     this._cancelScrollShrink = DOM.onAndCancel(this._content, 'scroll', this._debouncedContentScroll);
     DOM.setAttribute(this._content, 'scroll-shrink', 'true');
-    rAF(this.updateToolbarHeight.bind(this));
+    this.viewport.requestFrame(this.updateToolbarHeight.bind(this));
   }
 
   ngOnChanges(changes: {}): any {
@@ -125,7 +126,7 @@ export class MdToolbar implements AfterContentInit, OnChanges, OnDestroy {
 
   updateToolbarHeight() {
     this._toolbarHeight = DOM.getProperty(this.el.nativeElement, 'offsetHeight');
-    if(this._content){
+    if (this._content) {
       // Add a negative margin-top the size of the toolbar to the content el.
       // The content will start transformed down the toolbarHeight amount,
       // so everything looks normal.
@@ -160,7 +161,7 @@ export class MdToolbar implements AfterContentInit, OnChanges, OnDestroy {
 
     this._previousScrollTop = scrollTop;
 
-    rAF(() => {
+    this.viewport.requestFrame(() => {
       var hasWhiteFrame = DOM.hasClass(this.el.nativeElement, 'md-whiteframe-z1');
 
       if (hasWhiteFrame && !this._currentY) {
