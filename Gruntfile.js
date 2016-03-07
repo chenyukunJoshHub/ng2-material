@@ -247,6 +247,12 @@ module.exports = function (grunt) {
     webpack: {
       singleJs: require('./webpack.config.js'),
       bundle: require('./webpack.bundle.config.js')
+    },
+
+    universal: {
+      examples: {
+        src: 'index.html'
+      }
     }
 
   });
@@ -339,7 +345,7 @@ module.exports = function (grunt) {
     });
   });
 
-  grunt.registerTask('render', 'Prerender your Universal (isomorphic) Angular 2 app', function () {
+  grunt.registerMultiTask('universal', 'Prerender examples app as static HTML', function () {
     try {
       var proxyquire = require('proxyquire');
       var zone = require('zone.js');
@@ -353,72 +359,82 @@ module.exports = function (grunt) {
         'ng2-material/all': ng2material
       });
       var universal = require('angular2-universal-preview');
+
+
+      // var universal = {
+      //   NODE_HTTP_PROVIDERS,
+      //   NODE_LOCATION_PROVIDERS,
+      //   REQUEST_URL,
+      //   PRIME_CACHE,
+      //   queryParamsToBoolean
+      // };
+
+      var options = {
+        App: app.DemosApp,
+        providers: [
+          ng2material.MATERIAL_NODE_PROVIDERS,
+          universal.NODE_HTTP_PROVIDERS,
+          universal.NODE_LOCATION_PROVIDERS,
+          universal.REQUEST_URL,
+          universal.PRIME_CACHE,
+          universal.queryParamsToBoolean
+        ],
+        preboot: false,
+        separator: '\r\n'
+      };
+      var angular2Prerender = function (file) {
+        var str = file.toString();
+        var renderPromise = universal.renderToString;
+        var args = [options.App, options.providers];
+        if (options.preboot) {
+          renderPromise = universal.renderToStringWithPreboot;
+          args.push(options.preboot);
+        }
+        return renderPromise.apply(null, args)
+          .then(function (serializedApp) {
+            var html = str.replace(
+              // <selector></selector>
+              universal.selectorRegExpFactory(universal.selectorResolver(options.App)),
+              // <selector>{{ serializedCmp }}</selector>
+              serializedApp);
+            return new Buffer(html);
+          }).catch(function (e) {
+            console.error(e.stack);
+          });
+      };
+      this.files.forEach(function (f) {
+        var src = f.src.filter(function (filepath) {
+            if (!grunt.file.exists(filepath)) {
+              grunt.log.warn('Source file "' + filepath + '" not found.');
+              return false;
+            }
+            else {
+              return true;
+            }
+          })
+          .map(function (filepath) {
+            return grunt.file.read(filepath);
+          })
+          .join(grunt.util.normalizelf(options.separator));
+        // Handle options.
+        angular2Prerender(src)
+          .then(function (buffer) {
+            return src = buffer;
+          })
+          .then(function (_src) {
+            return grunt.file.write(f.dest, _src);
+          })
+          .then(function (_) {
+            return grunt.log.writeln('File "' + f.dest + '" created.');
+          });
+      });
+
     }
     catch (e) {
       console.error(e.stack);
       return;
     }
 
-    // var universal = {
-    //   NODE_HTTP_PROVIDERS,
-    //   NODE_LOCATION_PROVIDERS,
-    //   REQUEST_URL,
-    //   PRIME_CACHE,
-    //   queryParamsToBoolean
-    // };
-
-    var options = {
-      App: app.DemosApp,
-      providers: [
-        ng2material.MATERIAL_NODE_PROVIDERS
-      ],
-      preboot: false,
-      separator: '\r\n'
-    };
-    var angular2Prerender = function (file) {
-      var str = file.toString();
-      var renderPromise = universal.renderToString;
-      var args = [this.options.App, this.options.providers];
-      if (this.options.preboot) {
-        renderPromise = universal.renderToStringWithPreboot;
-        args.push(this.options.preboot);
-      }
-      return renderPromise.apply(null, args)
-        .then(function (serializedApp) {
-          var html = str.replace(
-            // <selector></selector>
-            universal.selectorRegExpFactory(universal.selectorResolver(options.App)),
-            // <selector>{{ serializedCmp }}</selector>
-            serializedApp);
-          return new Buffer(html);
-        });
-    };
-    this.files.forEach(function (f) {
-      var src = f.src.filter(function (filepath) {
-          if (!grunt.file.exists(filepath)) {
-            grunt.log.warn('Source file "' + filepath + '" not found.');
-            return false;
-          }
-          else {
-            return true;
-          }
-        })
-        .map(function (filepath) {
-          return grunt.file.read(filepath);
-        })
-        .join(grunt.util.normalizelf(options.separator));
-      // Handle options.
-      angular2Prerender(src)
-        .then(function (buffer) {
-          return src = buffer;
-        })
-        .then(function (_src) {
-          return grunt.file.write(f.dest, _src);
-        })
-        .then(function (_) {
-          return grunt.log.writeln('File "' + f.dest + '" created.');
-        });
-    });
   });
 
   grunt.registerTask('site-meta', 'Build metadata files describing example usages', function (tag) {

@@ -24,7 +24,6 @@ export interface IExampleData {
   {path: '/', name: 'Index', component: IndexPage, useAsDefault: true},
   {path: '/components/:id', name: 'Component', component: ComponentPage}
 ])
-
 @Component({
   selector: 'demos-app',
   host: {
