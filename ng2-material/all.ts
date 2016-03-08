@@ -106,21 +106,21 @@ export const MATERIAL_DIRECTIVES: Type[] = CONST_EXPR([
 /**
  * Material Design component providers for use in a Node.JS environment.
  */
-export const MATERIAL_NODE_PROVIDERS: any[] = [
+export const MATERIAL_NODE_PROVIDERS: any[] = CONST_EXPR([
   MdDialog,
   Media,
   SidenavService,
   MdRadioDispatcher,
   INPUT_VALIDATORS
-];
+]);
 
 /**
  * Material Design component providers for use in the browser.
  */
-export const MATERIAL_BROWSER_PROVIDERS: any[] = [
+export const MATERIAL_BROWSER_PROVIDERS: any[] = CONST_EXPR([
   MATERIAL_NODE_PROVIDERS,
   provide(ViewportHelper, {useClass: BrowserViewportHelper})
-];
+]);
 
 
 /**

@@ -346,61 +346,62 @@ module.exports = function (grunt) {
   });
 
   grunt.registerMultiTask('universal', 'Prerender examples app as static HTML', function () {
+    var done = this.async();
+    /*
+     * based on angular2-grunt-prerender
+     * https://github.com/angular/universal
+     *
+     * Copyright (c) 2016 Wassim Chegham
+     * Licensed under the MIT license.
+     */
     try {
       var proxyquire = require('proxyquire');
       var zone = require('zone.js');
       var reflect = require('reflect-metadata');
       var provide = require('angular2/core');
       var router = require('angular2/router');
-      var ng2material = require('./out/all.webpack.scripts');
+      var ng2material = require('./ng2-material/all');
       ng2material['@global'] = true;
       ng2material['@noCallThru'] = true;
       var app = proxyquire('./examples/app', {
         'ng2-material/all': ng2material
       });
+      var all = proxyquire('./examples/all', {
+        'ng2-material/all': ng2material
+      });
       var universal = require('angular2-universal-preview');
-
-
-      // var universal = {
-      //   NODE_HTTP_PROVIDERS,
-      //   NODE_LOCATION_PROVIDERS,
-      //   REQUEST_URL,
-      //   PRIME_CACHE,
-      //   queryParamsToBoolean
-      // };
-
-      var options = {
-        App: app.DemosApp,
-        providers: [
-          ng2material.MATERIAL_NODE_PROVIDERS,
-          universal.NODE_HTTP_PROVIDERS,
+      var options = this.options({
+        component: app.DemosApp,
+        componentProviders: ng2material.MATERIAL_NODE_PROVIDERS,
+        platformProviders: [
           universal.NODE_LOCATION_PROVIDERS,
-          universal.REQUEST_URL,
-          universal.PRIME_CACHE,
-          universal.queryParamsToBoolean
+        ],
+        directives: [
+          ng2material.MATERIAL_DIRECTIVES,
+          all.DEMO_DIRECTIVES
         ],
         preboot: false,
         separator: '\r\n'
-      };
+      });
       var angular2Prerender = function (file) {
-        var str = file.toString();
-        var renderPromise = universal.renderToString;
-        var args = [options.App, options.providers];
-        if (options.preboot) {
-          renderPromise = universal.renderToStringWithPreboot;
-          args.push(options.preboot);
+        var clientHtml = file.toString();
+        var bootloader = options.bootloader;
+        if (!options.bootloader) {
+          options.bootloader = {
+            component: options.component,
+            document: universal.parseDocument(clientHtml),
+            providers: options.providers || [],
+            componentProviders: options.componentProviders || [],
+            platformProviders: options.platformProviders || [],
+            directives: options.directives || [],
+            preboot: options.preboot
+          };
         }
-        return renderPromise.apply(null, args)
-          .then(function (serializedApp) {
-            var html = str.replace(
-              // <selector></selector>
-              universal.selectorRegExpFactory(universal.selectorResolver(options.App)),
-              // <selector>{{ serializedCmp }}</selector>
-              serializedApp);
-            return new Buffer(html);
-          }).catch(function (e) {
-            console.error(e.stack);
-          });
+        bootloader = universal.Bootloader.create(options.bootloader);
+
+        return bootloader.serializeApplication().then(function (html) {
+          return new Buffer(html);
+        });
       };
       this.files.forEach(function (f) {
         var src = f.src.filter(function (filepath) {
@@ -426,6 +427,7 @@ module.exports = function (grunt) {
           })
           .then(function (_) {
             return grunt.log.writeln('File "' + f.dest + '" created.');
+            done();
           });
       });
 
