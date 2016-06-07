@@ -15,29 +15,28 @@ module.exports = function (config) {
   config.set({
     basePath: '',
     frameworks: ['jasmine'],
-    files: [
-      {pattern: 'node_modules/es6-shim/es6-shim.js', included: true, watched: true},
-      {pattern: 'node_modules/angular2/bundles/angular2-polyfills.js', included: true, watched: true},
-      {pattern: 'node_modules/systemjs/dist/system-polyfills.js', included: true, watched: true},
-      {pattern: 'node_modules/systemjs/dist/system.src.js', included: true, watched: true},
-      {pattern: 'node_modules/rxjs/bundles/Rx.js', included: true, watched: true},
-      //{pattern: 'node_modules/angular2/bundles/angular2.dev.js', included: true, watched: true},
-      //{pattern: 'node_modules/angular2/bundles/testing.dev.js', included: true, watched: true},
-      'karma.ie.shims.js',
-      //'node_modules/zone.js/dist/zone-microtask.js',
-      //'node_modules/zone.js/dist/long-stack-trace-zone.js',
-      //'node_modules/zone.js/dist/jasmine-patch.js',
-      //'node_modules/es6-module-loader/dist/es6-module-loader.js',
-      'node_modules/systemjs/dist/system.src.js',
-      'node_modules/reflect-metadata/Reflect.js',
-      "config.karma.js",
-      {pattern: 'ng2-material/**/*.*', watched: true, included: false},
-      //{pattern: 'node_modules/systemjs/dist/system-polyfills.js', included: false, watched: false},
-      {pattern: 'node_modules/angular2/**/*.js', included: false, watched: false},
-      {pattern: 'node_modules/rxjs/**/*.js', included: false, watched: false},
-      {pattern: 'test/**/*.js', included: false, watched: true},
 
+    files: [
+      { pattern: 'node_modules/es6-shim/es6-shim.js', included: true, watched: false },
+      { pattern: 'node_modules/zone.js/dist/zone.js', included: true, watched: false },
+      { pattern: 'node_modules/reflect-metadata/Reflect.js', included: true, watched: false },
+      { pattern: 'node_modules/systemjs/dist/system-polyfills.js', included: true, watched: false },
+      { pattern: 'node_modules/systemjs/dist/system.src.js', included: true, watched: false },
+      { pattern: 'node_modules/zone.js/dist/async-test.js', included: true, watched: false },
+      { pattern: 'node_modules/rxjs/**/*.js', included: false, watched: false },
+      { pattern: 'node_modules/@angular/**/*.js', included: false, watched: false },
+      { pattern: 'node_modules/@angular2-material/**/*.js', included: false, watched: false },
+      'karma.ie.shims.js',
+      "config.karma.js",
+      { pattern: 'dist/*.*', included: false, watched: true },
+      { pattern: 'dist/components/**/*.js', included: false, watched: true },
+      { pattern: 'dist/core/**/*.js', included: false, watched: true },
+      { pattern: 'dist/platform/**/*.js', included: false, watched: true },
       "karma.main.js"
+    ],
+    exclude: [
+      // Vendor packages might include spec files. We don't want to use those.
+      'node_modules/**/*.spec.js'
     ],
     reporters: ['mocha', 'coverage'],
     port: 9876,
@@ -51,11 +50,13 @@ module.exports = function (config) {
     plugins: [
       'karma-*'
     ],
-    exclude: [
-      'node_modules/angular2/**/*_spec.js'
-    ],
 
-    preprocessors: (process.env.TRAVIS || coverageDebug) ? {"ng2-material/**/*.js": "coverage"} : {},
+    preprocessors: (process.env.TRAVIS || coverageDebug) ? {
+      "dist/*.js": "coverage",
+      "dist/components/**/*.js": "coverage",
+      "dist/core/**/*.js": "coverage",
+      "src/platform/**/*.js": "coverage"
+    } : {},
     coverageReporter: {
       dir: '.coverage',
 
